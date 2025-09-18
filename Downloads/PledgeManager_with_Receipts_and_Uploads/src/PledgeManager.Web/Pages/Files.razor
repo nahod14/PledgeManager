@@ -1,0 +1,47 @@
+
+@page "/files"
+@inject AppDbContext Db
+
+<h1>Files</h1>
+
+<select @bind="selectedPledgeId">
+    <option value="">-- select pledge --</option>
+    @foreach (var p in pledges)
+    {
+        <option value="@p.Id">@p.Donor!.Name - @p.Amount (@p.Status)</option>
+    }
+</select>
+
+@if (selectedPledgeId != Guid.Empty)
+{
+    <h3>Upload file for selected pledge</h3>
+    <FileUpload OwnerType="Pledge" OwnerId="@selectedPledgeId" />
+}
+
+<h3>Recent Files</h3>
+<table>
+    <thead><tr><th>When</th><th>Name</th><th>Owner</th><th>Key</th></tr></thead>
+    <tbody>
+        @foreach (var f in files)
+        {
+            <tr>
+              <td>@f.UploadedAt</td>
+              <td>@f.FileName</td>
+              <td>@($"{f.OwnerType}:{f.OwnerId}")</td>
+              <td>@f.BlobKey</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Pledge> pledges = new();
+    private Guid selectedPledgeId;
+    private List<FileBlob> files = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        pledges = await Db.Pledges.Include(x=>x.Donor).OrderByDescending(x=>x.StartDate).ToListAsync();
+        files = await Db.FileBlobs.OrderByDescending(x=>x.UploadedAt).Take(50).ToListAsync();
+    }
+}

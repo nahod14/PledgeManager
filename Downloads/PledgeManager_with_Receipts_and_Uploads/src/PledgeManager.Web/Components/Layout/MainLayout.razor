@@ -1,0 +1,18 @@
+
+@inherits LayoutComponentBase
+<PageTitle>PledgeManager</PageTitle>
+
+<div class="sidebar">
+    <NavLink href="/" Match="NavLinkMatch.All">Dashboard</NavLink>
+    <NavLink href="/donors">Donors</NavLink>
+    <NavLink href="/pledges">Pledges</NavLink>
+    <NavLink href="/payments">Payments</NavLink>
+</div>
+<div class="main">
+    <div class="topbar">
+        <a href="/login">Login</a>
+    </div>
+    <div class="content">
+        @Body
+    </div>
+</div>

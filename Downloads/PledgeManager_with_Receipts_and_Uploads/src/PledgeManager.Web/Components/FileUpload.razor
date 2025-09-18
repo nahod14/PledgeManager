@@ -1,0 +1,19 @@
+
+@using PledgeManager.Infrastructure
+@inject IFileStorage Storage
+@inject AppDbContext Db
+
+<InputFile OnChange="OnChange" />
+
+@code {
+    [Parameter] public string OwnerType { get; set; } = "Pledge";
+    [Parameter] public Guid OwnerId { get; set; }
+
+    private async Task OnChange(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file is null || OwnerId == Guid.Empty) return;
+        using var stream = file.OpenReadStream(20_000_000);
+        await Storage.SaveAsync(stream, file.Name, file.ContentType ?? "application/octet-stream", OwnerType, OwnerId);
+    }
+}

@@ -1,0 +1,60 @@
+
+@page "/donors"
+@inject AppDbContext Db
+
+<h1>Donors</h1>
+
+<input @bind="q" placeholder="Search name/email" />
+<button @onclick="Load">Search</button>
+<button @onclick="ToggleNew">+ New Donor</button>
+
+@if (ShowNew)
+{
+    <EditForm Model="@newDonor" OnValidSubmit="Create">
+        <InputText @bind-Value="newDonor.Name" placeholder="Name" />
+        <InputText @bind-Value="newDonor.Email" placeholder="Email" />
+        <InputText @bind-Value="newDonor.Phone" placeholder="Phone" />
+        <button type="submit">Save</button>
+    </EditForm>
+}
+
+<table>
+    <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+    <tbody>
+        @foreach (var d in donorsList)
+        {
+            <tr><td>@d.Name</td><td>@d.Email</td><td>@d.Phone</td></tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private string q = "";
+    private List<Donor> donorsList = new();
+    private bool ShowNew = false;
+    private Donor newDonor = new();
+
+    protected override Task OnInitializedAsync() => Load();
+
+    private async Task Load()
+    {
+        donorsList = await Db.Donors
+            .Where(d => string.IsNullOrWhiteSpace(q)
+                || d.Name.Contains(q) || d.Email.Contains(q))
+            .OrderBy(d => d.Name).ToListAsync();
+    }
+
+    private void ToggleNew()
+    {
+        ShowNew = !ShowNew;
+    }
+
+    private async Task Create()
+    {
+        Db.Donors.Add(newDonor);
+        await Db.SaveChangesAsync();
+        newDonor = new();
+        ShowNew = false;
+        await Load();
+    }
+}

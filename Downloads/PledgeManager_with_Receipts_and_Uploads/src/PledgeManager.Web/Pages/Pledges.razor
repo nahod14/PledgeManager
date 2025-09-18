@@ -1,0 +1,81 @@
+
+@page "/pledges"
+@inject AppDbContext Db
+
+<h1>Pledges</h1>
+
+<input @bind="q" placeholder="Search donor/status" />
+<button @onclick="Load">Search</button>
+
+<table>
+    <thead><tr><th>Donor</th><th>Amount</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead>
+    <tbody>
+        @foreach (var p in items)
+        {
+            <tr>
+              <td>@p.Donor?.Name</td>
+              <td>@p.Amount</td>
+              <td>@p.PaidTotal</td>
+              <td>@p.Balance</td>
+              <td><span class="status-badge @(p.Status == "Active" ? "status-active" : p.Status == "Overdue" ? "status-overdue" : "status-fulfilled")">@p.Status</span></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>New Pledge</h3>
+<EditForm Model="@vm" OnValidSubmit="Create">
+    <label>Donor</label>
+    <select @bind="vm.DonorId">
+        <option value="">-- select donor --</option>
+        @foreach (var d in donors)
+        {
+            <option value="@d.Id">@d.Name (@d.Email)</option>
+        }
+    </select>
+    <label>Amount</label>
+    <InputNumber @bind-Value="vm.Amount" />
+    <label>Frequency</label>
+    <InputText @bind-Value="vm.Frequency" />
+    <button type="submit">Create</button>
+</EditForm>
+
+@code {
+    private string q = "";
+    private List<Pledge> items = new();
+    private List<Donor> donors = new();
+    private NewPledge vm = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        donors = await Db.Donors.OrderBy(x=>x.Name).ToListAsync();
+        await Load();
+    }
+
+    private async Task Load()
+    {
+        items = await Db.Pledges
+            .Include(x=>x.Payments)
+            .Include(x=>x.Donor)
+            .Where(x => string.IsNullOrWhiteSpace(q)
+                || x.Status.Contains(q) || x.Donor!.Name.Contains(q))
+            .OrderByDescending(x=>x.Balance).ToListAsync();
+    }
+
+    private async Task Create()
+    {
+        if (vm.DonorId == Guid.Empty) return;
+        var pledge = new Pledge { DonorId = vm.DonorId, Amount = vm.Amount, Frequency = vm.Frequency };
+        Db.Pledges.Add(pledge);
+        await Db.SaveChangesAsync();
+        vm = new();
+        await Load();
+    }
+
+    private sealed class NewPledge
+    {
+        public Guid DonorId { get; set; }
+        public decimal Amount { get; set; }
+        public string Frequency { get; set; } = "OneTime";
+    }
+}

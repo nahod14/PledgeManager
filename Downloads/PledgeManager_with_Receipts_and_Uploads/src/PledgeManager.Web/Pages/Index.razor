@@ -1,0 +1,43 @@
+
+@page "/"
+@inject AppDbContext Db
+
+<h1>Dashboard</h1>
+<p>Quick stats from the database:</p>
+
+@if (_stats is null)
+{
+    <p>Loading…</p>
+}
+else
+{
+    <ul>
+        <li>Total Donors: @_stats.TotalDonors</li>
+        <li>Active Pledges: @_stats.ActivePledges</li>
+        <li>Overdue Pledges: @_stats.OverduePledges</li>
+        <li>Payments (count): @_stats.PaymentCount</li>
+    </ul>
+}
+
+@code {
+    private Stats? _stats;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _stats = new Stats
+        {
+            TotalDonors = await Db.Donors.CountAsync(),
+            ActivePledges = await Db.Pledges.CountAsync(p => p.Status == "Active"),
+            OverduePledges = await Db.Pledges.CountAsync(p => p.Status == "Overdue"),
+            PaymentCount = await Db.Payments.CountAsync()
+        };
+    }
+
+    private sealed class Stats
+    {
+        public int TotalDonors { get; set; }
+        public int ActivePledges { get; set; }
+        public int OverduePledges { get; set; }
+        public int PaymentCount { get; set; }
+    }
+}
