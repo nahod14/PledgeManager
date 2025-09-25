@@ -1,14 +1,132 @@
+/* Reset & base */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  color: #1f2937; /* slate-800 */
+  background: #ffffff;
+}
 
-body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin:0; }
-.sidebar { width: 220px; position: fixed; top:0; bottom:0; left:0; background:#f2f2f2; padding: 1rem; }
-.main { margin-left: 220px; }
-.topbar { padding: .75rem 1rem; border-bottom: 1px solid #eee; }
-.content { padding: 1rem; }
-table { border-collapse: collapse; width: 100%; }
-th, td { border: 1px solid #eee; padding: .5rem; text-align: left; }
-input { padding: .4rem; margin-right: .25rem; }
-button { padding: .45rem .7rem; cursor: pointer; }
-.status-badge { padding:.2rem .5rem; border-radius: 8px; }
-.status-active { background:#e6f7ff; }
-.status-overdue { background:#fff1f0; }
-.status-fulfilled { background:#f6ffed; }
+/* Grid layout: sidebar + main */
+.layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;            /* span header + content */
+  border-right: 1px solid #e5e7eb; /* gray-200 */
+  background: #f8fafc;       /* gray-50 */
+  padding: 16px;
+  position: sticky;
+  top: 0;                     /* stick on scroll */
+  align-self: start;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav a {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #374151; /* gray-700 */
+}
+
+.nav a.active, .nav a:hover {
+  background: #e5f3ff;       /* soft blue */
+  color: #0b5cab;            /* brandish blue */
+}
+
+/* Main area */
+.main {
+  grid-column: 2 / 3;
+  grid-row: 1 / 3;
+  min-width: 0; /* prevent overflow */
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+/* Top bar */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 10; /* above content */
+}
+
+.topbar .grow { flex: 1; }
+.topbar .login {
+  text-decoration: none;
+  color: #0b5cab;
+  font-weight: 600;
+}
+
+/* Content */
+.content {
+  padding: 16px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto; /* center content on large screens */
+}
+
+table { border-collapse: collapse; width: 100%; background: #fff; }
+th, td { border: 1px solid #eee; padding: .6rem; text-align: left; }
+th { background: #f3f4f6; }
+
+input, select, button {
+  font: inherit;
+  padding: .5rem .6rem;
+}
+button { cursor: pointer; border: 1px solid #d1d5db; border-radius: 8px; background: #f9fafb; }
+button:hover { background: #f3f4f6; }
+
+/* Status badges */
+.status-badge { padding: .2rem .5rem; border-radius: 999px; font-size: .85rem; }
+.status-active { background:#e6f7ff; color:#0b5cab; }
+.status-overdue { background:#fff1f0; color:#b91c1c; }
+.status-fulfilled { background:#f6ffed; color:#065f46; }
+
+/* Responsive: stack sidebar on small screens */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+  }
+  .sidebar {
+    position: static;
+    height: auto;
+    grid-row: 2 / 3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .nav { flex-direction: row; flex-wrap: wrap; }
+  .nav a { padding: 6px 10px; }
+  .main {
+    grid-column: 1 / 2;
+    grid-row: 1 / 4;
+  }
+}

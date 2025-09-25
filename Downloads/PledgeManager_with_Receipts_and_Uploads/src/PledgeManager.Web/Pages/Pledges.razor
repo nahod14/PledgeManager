@@ -55,11 +55,16 @@
     private async Task Load()
     {
         items = await Db.Pledges
-            .Include(x=>x.Payments)
-            .Include(x=>x.Donor)
+            .Include(x => x.Payments)
+            .Include(x => x.Donor)
             .Where(x => string.IsNullOrWhiteSpace(q)
-                || x.Status.Contains(q) || x.Donor!.Name.Contains(q))
-            .OrderByDescending(x=>x.Balance).ToListAsync();
+            || x.Status.Contains(q) || x.Donor!.Name.Contains(q))
+            .ToListAsync();                     // fetch from DB
+
+        items = items
+            .OrderByDescending(x => x.Balance)  // compute/order in memory
+            .ToList();
+
     }
 
     private async Task Create()

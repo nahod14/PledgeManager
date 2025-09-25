@@ -1,18 +1,30 @@
-
 @inherits LayoutComponentBase
 <PageTitle>PledgeManager</PageTitle>
 
-<div class="sidebar">
-    <NavLink href="/" Match="NavLinkMatch.All">Dashboard</NavLink>
-    <NavLink href="/donors">Donors</NavLink>
-    <NavLink href="/pledges">Pledges</NavLink>
-    <NavLink href="/payments">Payments</NavLink>
-</div>
-<div class="main">
-    <div class="topbar">
-        <a href="/login">Login</a>
-    </div>
-    <div class="content">
-        @Body
-    </div>
+<HeadContent>
+  <link rel="stylesheet" href="/app.css" />
+</HeadContent>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">PledgeManager</div>
+    <nav class="nav">
+      <NavLink href="/" Match="NavLinkMatch.All">Dashboard</NavLink>
+      <NavLink href="/donors">Donors</NavLink>
+      <NavLink href="/pledges">Pledges</NavLink>
+      <NavLink href="/payments">Payments</NavLink>
+      <NavLink href="/files">Files</NavLink>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="grow"></div>
+      <a class="login" href="/login">Login</a>
+    </header>
+
+    <section class="content">
+      @Body
+    </section>
+  </main>
 </div>

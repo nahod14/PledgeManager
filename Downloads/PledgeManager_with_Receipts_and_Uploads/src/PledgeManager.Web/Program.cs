@@ -6,6 +6,13 @@ using PledgeManager.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//new code
+// Force SQLite file to live under the Web project content root
+var dataSource = Path.Combine(builder.Environment.ContentRootPath, "pledge.db");
+builder.Configuration["ConnectionStrings:Default"] = $"Data Source={dataSource}";
+Console.WriteLine($"[DB] Using SQLite at: {dataSource}");
+
+
 // Db (SQLite for quick start)
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("Default")));
@@ -19,12 +26,14 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 // Auth
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
-    options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
-    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-}).AddIdentityCookies();
+
+//commented this line
+// builder.Services.AddAuthentication(options =>
+// {
+//     options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+//     options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+//     options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+// }).AddIdentityCookies();
 
 builder.Services.AddAuthorization();
 
@@ -45,6 +54,10 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+//newly added
+app.UseAuthentication();   
+app.UseAuthorization();   
 
 app.MapIdentityApi<IdentityUser>();
 app.MapRazorComponents<App>()
