@@ -229,9 +229,9 @@ If you encounter any issues or have questions:
 
 ## 📞 Contact
 
-- **Author**: Your Name
-- **Email**: your.email@example.com
-- **GitHub**: [@yourusername](https://github.com/yourusername)
+- **Author**: Nahom
+- **Email**: nahod14@gmail.com
+- **GitHub**: [@nahod14](https://github.com/nahod14)
 
 ---
 
