@@ -231,7 +231,7 @@ If you encounter any issues or have questions:
 
 - **Author**: Nahom
 - **Email**: nahod14@gmail.com
-- **GitHub**: [@ynahod14](https://github.com/nahod14)
+- **GitHub**: [@nahod14](https://github.com/nahod14)
 
 ---
 
